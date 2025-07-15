@@ -36,7 +36,12 @@ export default function Page() {
       });
     } else if (state.status === 'success') {
       setIsSuccessful(true);
-      router.refresh();
+      // Redirect to the custom scheme for mobile deep linking
+      if (typeof window !== 'undefined') {
+        window.location.href = 'desktoparcade://auth';
+      } else {
+        router.refresh();
+      }
     }
   }, [state.status, router]);
 

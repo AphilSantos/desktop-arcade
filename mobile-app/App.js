@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, Switch, TouchableOpacity, Linking } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,85 +21,30 @@ function HomeScreen({ navigation }) {
   );
 }
 
-function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+function LoginScreen() {
+  const [deepLinkMessage, setDeepLinkMessage] = useState('');
 
-  const handleLogin = async () => {
-    setLoading(true);
-    setError('');
-    setSuccess(false);
-    try {
-      const res = await fetch('https://agenticmodelmix.vercel.app/api/auth/mobile-login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (data.status === 'success') {
-        setSuccess(true);
-        setError('');
-        // TODO: Store user info/session, navigate to Home or main app screen
-      } else {
-        setError(data.message || 'Invalid credentials or server error.');
-      }
-    } catch (e) {
-      setError('Network error.');
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    const handleUrl = (event) => {
+      // You can parse event.url for tokens or session info
+      setDeepLinkMessage('Returned from web login!');
+    };
+    const subscription = Linking.addEventListener('url', handleUrl);
+    return () => subscription.remove();
+  }, []);
+
+  const openWebLogin = () => {
+    Linking.openURL('https://desktop-arcade.vercel.app/login');
   };
 
   return (
     <View style={styles.authContainer}>
-      <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Sign in to your account to continue</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email address"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        autoComplete="email"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        autoComplete="password"
-      />
-      <View style={styles.rowBetween}>
-        <View style={styles.rowCenter}>
-          <Switch
-            value={rememberMe}
-            onValueChange={setRememberMe}
-          />
-          <Text style={styles.rememberMeLabel}>Remember me</Text>
-        </View>
-        <TouchableOpacity onPress={() => {}}>
-          <Text style={styles.forgotPassword}>Forgot password?</Text>
-        </TouchableOpacity>
-      </View>
-      {error ? <Text style={{ color: 'red', marginBottom: 8 }}>{error}</Text> : null}
-      {success ? <Text style={{ color: 'green', marginBottom: 8 }}>Login successful!</Text> : null}
-      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-        <Text style={styles.buttonText}>{loading ? 'Signing in...' : 'Sign in'}</Text>
+      <Text style={styles.title}>Login</Text>
+      <Text style={styles.subtitle}>Login is only available on the web.</Text>
+      <TouchableOpacity style={styles.button} onPress={openWebLogin}>
+        <Text style={styles.buttonText}>Open Web Login</Text>
       </TouchableOpacity>
-      <Text style={styles.signUpText}>
-        Don't have an account?{' '}
-        <Text style={styles.signUpLink} onPress={() => navigation.navigate('Register')}>
-          Sign up
-        </Text>
-      </Text>
+      {deepLinkMessage ? <Text style={{ color: 'green', marginTop: 16 }}>{deepLinkMessage}</Text> : null}
     </View>
   );
 }
