@@ -192,9 +192,3 @@
 .suggestion-highlight {
     @apply bg-blue-200 hover:bg-blue-300 dark:hover:bg-blue-400/50 dark:text-blue-50 dark:bg-blue-500/40;
 }
-
-@media (max-width: 700px) {
-    header.flex.sticky.top-0.bg-background.py-1\.5.items-center.px-2.md\:px-2.gap-2 {
-        margin-top: 25px;
-    }
-}

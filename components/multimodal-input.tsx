@@ -190,20 +190,10 @@ function PureMultimodalInput({
     [attachments, handleSubmit, clearInput],
   );
 
-  // Utility to detect if running in a mobile WebView
-  function isInMobileWebView() {
-    if (typeof window === 'undefined') return false;
-    // Expo/React Native WebView injects this object
-    if ('ReactNativeWebView' in window) return true;
-    // Fallback: check user agent for WebView patterns
-    return /wv|WebView|iPhone|Android/i.test(navigator.userAgent);
-  }
-
   return (
     <form
       className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl"
       onSubmit={submitForm}
-      style={{ paddingBottom: isInMobileWebView() ? 60 : undefined }}
     >
       <div className="relative w-full flex flex-col gap-4">
         {messages.length === 0 &&
